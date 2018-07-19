@@ -320,12 +320,12 @@ then save it and upload it to your router,should able to normally start your "op
 
 
 
-Guess only few people using X86_64 version of Gargoyle,but here I'm still upload the patched wget for somebody who got 99% into similar trouble,remember to backup your orignal file before using it to replace oringal one.
+Guess only few people using X86_64 version of Gargoyle,but here I'm still upload the patched wget for somebody who got 99% into similar trouble,remember to backup your orignal file before using it to replace oringal one.  
 
-File: Z:\wget_nossl_check\wget-ssl
-Size: 430817 bytes
-MD5: C317F18F583151B3D05778C9417E12DE
-SHA1: C18AF1FE244B13496D06810C1EF9A3CA82C92FBF
-CRC32: 5201D170
+File: Z:\wget_nossl_check\wget-ssl  
+Size: 430817 bytes  
+MD5: C317F18F583151B3D05778C9417E12DE  
+SHA1: C18AF1FE244B13496D06810C1EF9A3CA82C92FBF  
+CRC32: 5201D170  
 
 
