@@ -48,6 +48,7 @@ But if you think I gonna modify the source code and recompile it,you wrong,I'm t
 
 5.First I searched "--no-check-certificate" string and found the function we need should be in wget-1.17.1\src\openssl.c  
 
+--- 
 ```
 ssl_check_certificate (int fd, const char *host)
 {
@@ -310,6 +311,8 @@ would be a easy way.so here we do the same,found that 0000000000429632 would be 
 0000000000429632 jnz     short loc_42963B  
 ```
 to "nop" or "jmp loc_429634" should be work.  
+
+--- 
 ![](/9.png)
 ![](/10.png) 
 
