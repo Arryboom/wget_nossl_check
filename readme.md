@@ -1,5 +1,5 @@
 # A Simple Trick to patch wget to avoid ssl certificate check
-Well,recently I got a Gargoyle router which is x86_64 arch,simple flash sys img into this router,and found that I can't use opkg update because of opkg sign error and wget ssl certificate check error like below:
+Well,recently I got a Gargoyle router which is x86_64 arch,simple flash sys img into this router,and found that I can't use opkg update because of opkg sign error and wget ssl certificate check error like below:  
 
 ```
 root@llll:/etc# opkg update
@@ -9,7 +9,7 @@ Signature check failed.
 Remove wrong Signature file.
 
 ```
-1.So first we need to disable signature check of opkg,simple comment this line in /etc/opkg.conf
+1.So first we need to disable signature check of opkg,simple comment this line in /etc/opkg.conf  
 
 ```
 root@aaaa:/etc# cat opkg.conf 
@@ -19,7 +19,7 @@ lists_dir ext /var/opkg-lists
 option overlay_root /overlay
 #option check_signature 1
 ```
-![](/3.png)
+![](/3.png)  
 2.Then I got error like
 
 ```
@@ -38,15 +38,15 @@ Collected errors:
 * To connect to archive.openwrt.org insecurely, use `--no-check-certificate‘.
 ```
 
-3.First make sure you got right DNS configuration in /etc/resolve.conf
-Then I found that "To connect to archive.openwrt.org insecurely",means there is another certificate check failed.
-I tried rename wget,wget-ssl to owget,owget-ssl in /usr/bin,and then create a sh script with content "owget --no-check-certificate $@",then ln xx.sh wget and wget-ssl,but doesn't work yet,opkg update show wget return 1,still failed,so I have to try another way.
+3.First make sure you got right DNS configuration in /etc/resolve.conf  
+Then I found that "To connect to archive.openwrt.org insecurely",means there is another certificate check failed.  
+I tried rename wget,wget-ssl to owget,owget-ssl in /usr/bin,and then create a sh script with content "owget --no-check-certificate $@",then ln xx.sh wget and wget-ssl,but doesn't work yet,opkg update show wget return 1,still failed,so I have to try another way.  
 
-4.use wget --version I got this is wget-1.17.1.Quickly I got source code of this version from https://ftp.gnu.org/gnu/wget/
+4.use wget --version I got this is wget-1.17.1.Quickly I got source code of this version from https://ftp.gnu.org/gnu/wget/  
 
-But if you think I gonna modify the source code and recompile it,you wrong,I'm too lazy to config cross compile enviroment since this is not a well known linux distrbution.Simple use IDA to patch it :)
+But if you think I gonna modify the source code and recompile it,you wrong,I'm too lazy to config cross compile enviroment since this is not a very well known linux distrbution and I may hang on configuration of cross compile enviroment for a long time.Simple use IDA to patch it :)  
 
-5.First I searched "--no-check-certificate" string and found the function we need should be in wget-1.17.1\src\openssl.c
+5.First I searched "--no-check-certificate" string and found the function we need should be in wget-1.17.1\src\openssl.c  
 
 ```
 ssl_check_certificate (int fd, const char *host)
@@ -284,16 +284,16 @@ To connect to %s insecurely, use `--no-check-certificate'.\n"),
 
 
 
-6.Actually you don't need source code here,but I want make sure no mistake.
-Then We can get wget-ssl(in Gargoyle wget was only a link to wget-ssl) and put it into IDA.
-![](/2.png)
-from searching "--no-check-certificate" in string window of IDA we can know it's in 000000000045A67C,and double click it from string window will bring us to Main view and we know that sub_4295F9 has a read it.
+6.Actually you don't need check source code here,but here I want make sure no mistake.  
+Then We can get wget-ssl(in Gargoyle wget was only a link to wget-ssl) and put it into IDA.  
+![](/2.png)  
+from searching "--no-check-certificate" in string window of IDA we can know it's in 000000000045A67C,and double click it from string window will bring us to Main view and we know that sub_4295F9 has a read it.  
 
 ![](/5.png)
 ![](/6.png)
-Here we use "F5" to decompile it
+Here we use "F5" to decompile it  
 ![](/7.png)
-![](/8.png)
+![](/8.png)  
 We can see it's almost 100% similar to source code,this the function ssl_check_certificate() we want to change,and we want to change this function to make it always return true.So check the Assemble and use IDA's plugin KeyPatch to modify it without using other tool.
 In source code we can know modify 
 ```
@@ -307,20 +307,20 @@ if (true)
 ```
 would be a easy way.so here we do the same,found that 0000000000429632 would be the assemble of this,and because of cdecl call defination and some compiler's optimization,the return function was loca_429A7F,and here we know last line 0000000000429632 was "if",so here we change 
 ```
-0000000000429632 jnz     short loc_42963B
+0000000000429632 jnz     short loc_42963B  
 ```
-to "nop" or "jmp loc_429634" should be work.
+to "nop" or "jmp loc_429634" should be work.  
 ![](/9.png)
 ![](/10.png) 
 
 then save it and upload it to your router,should able to normally start your "opkg update" and other installation tasks.
 
 
-![](/1.png)
+![](/1.png)  
 
 
 
-Guess only few people using X86_64 version of Gargoyle,but here I'm still upload the patched wget for somebody who got 99% into similar trouble,remember to backup your orignal file before using it to replace oringal one.  
+Guess only few people using X86_64 version of Gargoyle,but here I'm still upload the patched wget for somebody who got into similar trouble,remember to backup your orignal file before using it to replace oringal one.  
 
 File: Z:\wget_nossl_check\wget-ssl  
 Size: 430817 bytes  
