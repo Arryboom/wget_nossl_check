@@ -44,7 +44,7 @@ I tried rename wget,wget-ssl to owget,owget-ssl in /usr/bin,and then create a sh
 
 4.use wget --version I got this is wget-1.17.1.Quickly I got source code of this version from https://ftp.gnu.org/gnu/wget/  
 
-But if you think I gonna modify the source code and recompile it,you wrong,I'm too lazy to config cross compile enviroment since this is not a very well known linux distrbution and I may hang on configuration of cross compile enviroment for a long time.Simple use IDA to patch it :)  
+But if you think I gonna modify the source code and recompile it,no,I'm too lazy to config cross compile enviroment since this is not a very well known linux distrbution and I may hang on configuration of cross compile enviroment for a long time.Simple use IDA to patch it :)  
 
 5.First I searched "--no-check-certificate" string and found the function we need should be in wget-1.17.1\src\openssl.c  
 
